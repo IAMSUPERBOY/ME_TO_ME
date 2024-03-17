@@ -1,0 +1,80 @@
+const net=require('net');
+const express=require('express');
+const app=express();
+const ejs=require('ejs');
+var bodyParser=require('body-parser');
+
+var host='localhost';
+const PORT=8080
+//middlewares
+app.set('view engine','ejs');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended:true
+}))
+
+app.get('/',(req,res)=>{
+    res.render("client",{});
+})
+let data;
+app.post('/data',(req,res)=>{
+    data=req.body.data;
+    console.log("data successfully sent to server...");
+    client.write(data);
+})
+//create connection 
+let client=new net.Socket();
+//let client=net.createConnection(PORT,host,()=>{});
+let connect_status=false;
+function make_connection()
+{
+    client=net.createConnection(PORT,host,()=>{});
+     connect_status=false;
+client.on('connect',onConnect);
+client.on('data',(data)=>{
+    
+    console.log(data.toString());
+    client.write("SUCCESS");
+})
+client.on('error',onError);
+client.on('close',onClose);
+}
+
+make_connection();
+function onConnect()
+{
+    console.log("Connection made...");
+    connect_status=true;
+}
+
+function onError(err)
+{
+    if (err.code==='ECONNREFUSED')
+    {
+        console.log("Waiting for connection.....");
+        setTimeout(()=>{
+            make_connection();
+        
+        },1000);
+    }
+}
+
+function onClose()
+{
+    if(connect_status==true)
+    {
+        console.log("Connection successfully closed");
+        client.end();
+        setTimeout(make_connection,1000);
+    }
+   
+    
+   
+}
+
+//main logic
+
+
+app.listen(3001,(req,res)=>{
+    console.log("App is running on port 3000");
+})

@@ -1,0 +1,39 @@
+
+<!DOCTYPE html> 
+<html> 
+    
+<head> 
+    <title>Client</title> 
+</head> 
+    
+<body> 
+    <form id="myForm">
+        <input type="text" name="data" id="dataInput" />
+        <button type="button" id="submitButton">Submit</button>
+      </form>
+      <script>
+        const subBtn=document.getElementById('submitButton');
+        subBtn.addEventListener('click',()=>{
+            const data=document.getElementById('dataInput').value;
+            console.log(data);
+            sendData(data);
+        });
+        function sendData(data)
+        {
+            fetch('/data',{
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body:JSON.stringify({data}),
+            })/* .then(response=>response.text())
+            .then(result=>{
+                console.log("form send to server from index.ejs....");
+            }) */
+            .catch(error=>{
+                throw error;
+            })
+        }
+      </script>
+      
+</body> 
+  
+</html>
