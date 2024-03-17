@@ -10,7 +10,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended:true
 }))
-
+let socket_client=new net.Socket();
 function closeServer(server)
 {
     server.close();
@@ -20,38 +20,52 @@ app.get("/",(req,res)=>{
     res.render("index",{text:""});    
 })
 let data;
-app.post('/data', (req, res) => {
-   data = req.body.data; // Access the value of the input field with name="data"
-    console.log('Received data:', data);
-    const server=net.createServer((socket)=>{
-        socket.write(data,'utf-8');
+let RECEIVE_CLIENT_DATA=false;
+const server=net.createServer((socket)=>{
+    socket_client=socket;
+        app.post('/data', (req, res) => {
+        RECEIVE_CLIENT_DATA=true;
+       data = req.body.data; // Access the value of the input field with name="data"
+        console.log('Received data:', data);
+        if(socket.write(data,'utf-8')){
+            console.log("write successfull..");
+        };
         socket.on('data',(data)=>{
             if(data.toString()==="SUCCESS")
             {
-                socket.end();
+                //socket.end();
                 console.log('session ended...');
+                RECEIVE_CLIENT_DATA=false;
                 //closeServer(server);
             }
-            else if(data)
-            {
-                res.render("index",{text:data.toString()});
-            }
         })
+        //res.json({ message: 'Data received successfully!' });
     });
-    
-    server.listen({
-        host:'localhost',
-        port:PORT,
-    },()=>{
-        console.log("tcp port active.....");
+
+    socket.on('data',(data)=>{
+
+        if (!RECEIVE_CLIENT_DATA)
+        {
+            console.log("Client data:"+data);
+        }
     })
-  
+    
+    
+    
     // ... Process the data (e.g., validation, database storage) ...
     
     // Optionally send a response back to the client
-    res.json({ message: 'Data received successfully!' });
     
-  });
+});
+socket_client.on('data',()=>{
+    console.log("reachable....");
+})
+server.listen({
+    host:'localhost',
+    port:PORT,
+},()=>{
+    console.log("tcp port active.....");
+})
 
 
 

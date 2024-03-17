@@ -17,11 +17,6 @@ app.get('/',(req,res)=>{
     res.render("client",{});
 })
 let data;
-app.post('/data',(req,res)=>{
-    data=req.body.data;
-    console.log("data successfully sent to server...");
-    client.write(data);
-})
 //create connection 
 let client=new net.Socket();
 //let client=net.createConnection(PORT,host,()=>{});
@@ -29,7 +24,7 @@ let connect_status=false;
 function make_connection()
 {
     client=net.createConnection(PORT,host,()=>{});
-     connect_status=false;
+    connect_status=false;
 client.on('connect',onConnect);
 client.on('data',(data)=>{
     
@@ -65,12 +60,20 @@ function onClose()
     {
         console.log("Connection successfully closed");
         client.end();
+        connect_status=false;
         setTimeout(make_connection,1000);
     }
-   
     
-   
+    
+    
 }
+app.post('/data',(req,res)=>{
+    data=req.body.data;
+    console.log("data successfully sent to server...");
+    if(client.write(data)){
+        console.log("This was successfull...");
+    };
+})
 
 //main logic
 
