@@ -1,10 +1,10 @@
 const net = require("net");
-const cookieParser=require('cookie-parser');
+const cookieParser = require("cookie-parser");
 const express = require("express");
 const app = express();
 const ejs = require("ejs");
 var bodyParser = require("body-parser");
-const nocache = require('nocache');
+const nocache = require("nocache");
 
 app.use(nocache());
 const PORT = 8080;
@@ -26,16 +26,14 @@ let SHOW_CLIENT_DATA = false;
 app.get("/", (req, res) => {
   //res.cookie("flag","false");
   if (!SHOW_CLIENT_DATA) {
-    res.render("index", { text: "hey this is something"});
-  }else
-  {
-    res.render("index",{text:global_data});
+    res.render("index", { text: "hey this is something" });
+  } else {
+    res.render("index", { text: global_data });
     //res.cookie("flag2","false");
-    
   }
   //res.cookie("flag","false");
 });
-let global_data="this condition";
+let global_data = "this condition";
 let RECEIVE_CLIENT_DATA = false;
 const server = net.createServer((socket) => {
   socket_client = socket;
@@ -47,24 +45,24 @@ const server = net.createServer((socket) => {
       console.log("write successfull..");
     }
     socket.on("data", (data) => {
-        //socket.end();
-        const data_obj=JSON.parse(data);
-        if (data_obj.data === "SUCCESS") {
+      //socket.end();
+      const data_obj = JSON.parse(data);
+      if (data_obj.data === "SUCCESS") {
         console.log("session ended...");
         RECEIVE_CLIENT_DATA = false;
-        SHOW_CLIENT_DATA=false;
+        SHOW_CLIENT_DATA = false;
         //closeServer(server);
       }
     });
     //res.json({ message: 'Data received successfully!' });
   });
   socket.on("data", (data) => {
-    const data_obj=JSON.parse(data);
+    const data_obj = JSON.parse(data);
     if (!RECEIVE_CLIENT_DATA) {
       console.log("Client data:" + data_obj.data);
     }
-    SHOW_CLIENT_DATA=true;
-    global_data=data_obj.data;
+    SHOW_CLIENT_DATA = true;
+    global_data = data_obj.data;
   });
 
   // ... Process the data (e.g., validation, database storage) ...
