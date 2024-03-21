@@ -12,11 +12,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended:true
 }))
-
+let SHOW_DATA=false;
 app.get('/',(req,res)=>{
-    res.render("client",{});
+    if (!SHOW_DATA) {
+        res.render("index", { text: "hey this is something"});
+      }else
+      {
+        res.render("index",{text:global_data});
+        //res.cookie("flag2","false");
+        
+      }
 })
-let data;
+let global_data;
 //create connection 
 let client=new net.Socket();
 //let client=net.createConnection(PORT,host,()=>{});
@@ -29,7 +36,9 @@ client.on('connect',onConnect);
 client.on('data',(data)=>{
     
     console.log(data.toString());
-    client.write("SUCCESS");
+    SHOW_DATA=true;
+    global_data=data.toString();
+    client.write(JSON.stringify({data:"SUCCESS",send:"client",dest:"server"}));
 })
 client.on('error',onError);
 client.on('close',onClose);
@@ -68,11 +77,12 @@ function onClose()
     
 }
 app.post('/data',(req,res)=>{
-    data=req.body.data;
+    data={data:req.body.data,send:"client",dest:"httpserver"};
     console.log("data successfully sent to server...");
-    if(client.write(data)){
+    if(client.write(JSON.stringify(data))){
         console.log("This was successfull...");
     };
+    SHOW_DATA=false;
 })
 
 //main logic

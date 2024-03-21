@@ -11,20 +11,21 @@
         <input type="text" name="data" id="dataInput" />
         <button type="button" id="submitButton">Submit</button>
       </form>
-      <h1>
-        data_received
-      </h1>
-      <textarea id="data_received" >
-        <%= text %> 
-      </textarea>
+      <!-- <h1>
+        <%= text %>
+      </h1> -->
+      <iframe id="Message" srcdoc="<%= text %>"></iframe>
       <script>
         const subBtn=document.getElementById('submitButton');
         subBtn.addEventListener('click',()=>{
             const data=document.getElementById('dataInput').value;
             console.log(data);
             sendData(data);
+
         });
-        function sendData(data)
+       
+        //console.log(cookies);
+        async function sendData(data)
         {
             fetch('/data',{
                 method:'POST',
@@ -38,6 +39,16 @@
                 throw error;
             })
         }
+        function refresh()
+        {
+            const iframe=document.querySelector('iframe').contentWindow;
+            iframe.src=iframe.src;      
+        }
+        setInterval(refresh,10000);
+        
+
+      // Check cookie flag initially and set an interval to check every second
+        
       </script>
       
 </body> 

@@ -11,6 +11,7 @@
         <input type="text" name="data" id="dataInput" />
         <button type="button" id="submitButton">Submit</button>
       </form>
+      <iframe id="Message" srcdoc="<%= text %>"></iframe>
       <script>
         const subBtn=document.getElementById('submitButton');
         subBtn.addEventListener('click',()=>{
