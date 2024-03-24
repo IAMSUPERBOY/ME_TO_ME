@@ -16,14 +16,12 @@ app.use(
 );
 let SHOW_DATA = false;
 app.get("/", (req, res) => {
-  if (!SHOW_DATA) {
-    res.render("index", { text: "hey this is something" });
-  } else {
+  
     res.render("index", { text: global_data });
     //res.cookie("flag2","false");
-  }
+  
 });
-let global_data;
+let global_data="";
 //create connection
 let client = new net.Socket();
 //let client=net.createConnection(PORT,host,()=>{});

@@ -6,6 +6,7 @@ const ejs = require("ejs");
 var bodyParser = require("body-parser");
 const nocache = require("nocache");
 
+
 app.use(nocache());
 const PORT = 8080;
 //middlewares
@@ -23,17 +24,15 @@ function closeServer(server) {
 }
 //main logic
 let SHOW_CLIENT_DATA = false;
+
 app.get("/", (req, res) => {
   //res.cookie("flag","false");
-  if (!SHOW_CLIENT_DATA) {
-    res.render("index", { text: "hey this is something" });
-  } else {
+   
     res.render("index", { text: global_data });
-    //res.cookie("flag2","false");
-  }
+
   //res.cookie("flag","false");
 });
-let global_data = "this condition";
+let global_data = "";
 let RECEIVE_CLIENT_DATA = false;
 const server = net.createServer((socket) => {
   socket_client = socket;
@@ -63,6 +62,9 @@ const server = net.createServer((socket) => {
     }
     SHOW_CLIENT_DATA = true;
     global_data = data_obj.data;
+    app.get("/", (req, res) => {
+      res.redirect("/"); // Redirect to the same path, causing a reload
+    });
   });
 
   // ... Process the data (e.g., validation, database storage) ...
