@@ -77,5 +77,5 @@ app.post("/data", (req, res) => {
 //main logic
 
 app.listen(3001, (req, res) => {
-  console.log("App is running on port 3000");
+  console.log("App is running on port 3001");
 });
