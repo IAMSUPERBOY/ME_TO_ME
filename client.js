@@ -35,7 +35,7 @@ function make_connection() {
     SHOW_DATA = true;
     global_data = data.toString();
     client.write(
-      JSON.stringify({ data: "SUCCESS", send: "client", dest: "server" })
+      JSON.stringify({ data: "0_x_0", send: "client", dest: "server" })
     );
   });
   client.on("error", onError);

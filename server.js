@@ -1,5 +1,5 @@
 const net = require("net");
-const cookieParser = require("cookie-parser");
+
 const express = require("express");
 const app = express();
 const ejs = require("ejs");
@@ -17,7 +17,7 @@ app.use(
     extended: true,
   })
 );
-app.use(cookieParser());
+
 let socket_client = new net.Socket();
 function closeServer(server) {
   server.close();
@@ -44,27 +44,29 @@ const server = net.createServer((socket) => {
       console.log("write successfull..");
     }
     socket.on("data", (data) => {
-      //socket.end();
-      const data_obj = JSON.parse(data);
-      if (data_obj.data === "SUCCESS") {
+    
         console.log("session ended...");
         RECEIVE_CLIENT_DATA = false;
         SHOW_CLIENT_DATA = false;
         //closeServer(server);
-      }
+     
     });
     //res.json({ message: 'Data received successfully!' });
   });
   socket.on("data", (data) => {
     const data_obj = JSON.parse(data);
-    if (!RECEIVE_CLIENT_DATA) {
-      console.log("Client data:" + data_obj.data);
+    if(data_obj.data==='0_x_0')
+    {
+      global_data=global_data;
     }
-    SHOW_CLIENT_DATA = true;
-    global_data = data_obj.data;
-    app.get("/", (req, res) => {
+    else if (!RECEIVE_CLIENT_DATA) {
+      console.log("Client data:" + data_obj.data);
+      SHOW_CLIENT_DATA = true;
+      global_data = data_obj.data;
+    }
+    /* app.get("/", (req, res) => {
       res.redirect("/"); // Redirect to the same path, causing a reload
-    });
+    }); */
   });
 
   // ... Process the data (e.g., validation, database storage) ...
